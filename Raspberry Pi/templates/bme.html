@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+
+      <h1>BME</h1>
+      <hr>
+
+      <div class="mb-3">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" class="form-control" id="name" placeholder="Your name">
+        </div>
+
+        <button class="btn btn-primary" id="submit" onclick="countdown_init();">Submit message</button>
+      </div>
+
+      <h3>Messages</h3>
+      <hr>
+
+    </div>
+  </div>
+</div>
+
+{% block script %}
+
+<script>
+
+var countdown;
+var countdown_num;
+
+function countdown_init(){
+  countdown_num = 5;
+  submit_data();
+}
+
+function submit_data(){
+  var name = document.getElementById("name");
+
+  var entry = {
+    name: name.value
+  };
+
+  fetch(`/piapp/bme/create`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(entry),
+    cache: "no-cache",
+    headers: new Headers({
+      "content-type": "application/json"
+    })
+  })
+   .then(function (response) {
+     if (response.status !== 200){
+       console.log(`Problem! Status code: ${response.status}`);
+       return;
+     }
+     response.json().then(function (data) {
+       console.log("Submit_data: " + data);
+       countdown_trigger();
+     });
+   })
+   .catch(function (error) {
+     console.log("Fetch error: " + error);
+   });
+}
+
+function countdown_trigger(){
+  if(countdown_num > 0){
+    countdown_num--;
+    if(countdown_num > 0){
+      countdown = setTimeout('countdown_trigger()', 1000);
+    } else {
+      clear_data();
+    }
+  }
+}
+
+function clear_data(){
+  clearTimeout(countdown);
+
+  var name = " ";
+
+  var entry = {
+    'name' : ' '
+  };
+
+  fetch(`/piapp/bme/create`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(entry),
+    cache: "no-cache",
+    headers: new Headers({
+      "content-type": "application/json"
+    })
+  })
+   .then(function (response) {
+     if (response.status !== 200){
+       console.log(`Problem! Status code: ${response.status}`);
+       return;
+     }
+     response.json().then(function (data) {
+       console.log("clear_data: " + data);
+     });
+   })
+   .catch(function (error) {
+     console.log("Fetch error: " + error);
+   });
+}
+
+</script>
+
+{% endblock %}
+
+{% endblock content %}
