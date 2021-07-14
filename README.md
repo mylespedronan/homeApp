@@ -6,4 +6,6 @@ Components:
 - NodeMCU (ESP8266)
 - Raspberry Pi
 - DHT11 Temperature and Humidity Sensor
-- BME280 Sensor
+
+To do:
+- Integrate BME280 Sensor
